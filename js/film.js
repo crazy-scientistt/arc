@@ -20,72 +20,25 @@ const ArcFilm = (() => {
     return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
   }
 
+  function weekLabel(now = Date.now()) {
+    return `${fmt(startOfWeek(now))} – ${fmt(endOfWeek(now))}`;
+  }
+
   function weekNotes(notes, now = Date.now()) {
     const start = startOfWeek(now).getTime();
     const end = endOfWeek(now).getTime();
     return notes.filter((note) => note.createdAt >= start && note.createdAt <= end);
   }
 
-  function uniquePeople(notes) {
-    const set = new Set();
-    notes.forEach((note) => (note.people || []).forEach((p) => set.add(p)));
-    return [...set];
-  }
-
-  function titleFrom(notes) {
-    const wants = notes.flatMap((note) => note.wants || []);
-    if (wants.length) return wants[0].replace(/^(Want to|Done with|Keep)\s+/i, "");
-    if (!notes.length) return "A quiet week";
-    const words = notes.map((n) => n.summary).join(" ");
-    if (/job|work|office/i.test(words)) return "The same week, again";
-    if (/tired|sleep|late/i.test(words)) return "Running on fumes";
-    if (/sara|friend|dad|mom/i.test(words)) return "People, then silence";
-    return "Don't lose the plot";
-  }
-
-  function driftLine(notes) {
-    const wants = notes.flatMap((n) => n.wants || []);
-    const done = wants.filter((w) => /^done with/i.test(w));
-    if (done.length >= 2) {
-      return `You said you were done more than once this week. The plot did not change.`;
-    }
-    if (done.length) {
-      return `You said you were ${done[0].toLowerCase()}. Check whether this week moved at all.`;
-    }
-    if (!notes.length) return "There is not enough story yet. Talk for 90 seconds tonight.";
-    if (notes.length === 1) return "One scene is not a week. Come back tomorrow.";
-    return `You showed up ${notes.length} times. The thread is starting to hold.`;
-  }
-
-  function generate(state, now = Date.now()) {
-    const notes = weekNotes(state.notes, now);
-    const start = startOfWeek(now);
-    const end = endOfWeek(now);
-    const people = uniquePeople(notes);
-    const open = state.loops.filter((loop) => loop.status === "open");
-    const scenes = notes.slice(0, 6).map((note, i) => ({
-      label: i === 0 ? "Opening" : `Scene ${i + 1}`,
-      text: note.summary,
+  function recentContext(notes, limit = 6) {
+    return notes.slice(0, limit).map((note) => ({
+      summary: note.summary,
+      text: String(note.text || "").slice(0, 280),
     }));
-
-    return {
-      title: titleFrom(notes),
-      weekLabel: `${fmt(start)} – ${fmt(end)}`,
-      noteCount: notes.length,
-      people,
-      openLoops: open.slice(0, 5),
-      drift: driftLine(notes),
-      scenes,
-      closing: open.length
-        ? `${open.length} loop${open.length === 1 ? "" : "s"} still open. The credits can wait.`
-        : "No open loops. Rare, and worth keeping.",
-    };
   }
 
-  function sampleWeek() {
-    const now = Date.now();
-    const day = 24 * 60 * 60 * 1000;
-    const notes = [
+  function sampleTexts() {
+    return [
       {
         text: "Long day. I told Sara I'd send the notes tonight and I didn't. I keep saying I'm done with this job and then I stay until 1. I should call dad on Sunday.",
         daysAgo: 6,
@@ -107,20 +60,7 @@ const ArcFilm = (() => {
         daysAgo: 0,
       },
     ];
-
-    return notes.map((item) => {
-      const analysis = ArcExtract.analyze(item.text);
-      return {
-        text: item.text,
-        createdAt: now - item.daysAgo * day - 3 * 60 * 60 * 1000,
-        summary: analysis.summary,
-        people: analysis.people,
-        loops: analysis.loops,
-        wants: analysis.wants,
-        source: "demo",
-      };
-    });
   }
 
-  return { generate, sampleWeek, weekNotes, startOfWeek, endOfWeek };
+  return { startOfWeek, endOfWeek, weekLabel, weekNotes, recentContext, sampleTexts };
 })();

@@ -6,6 +6,7 @@ const ArcStore = (() => {
       notes: [],
       loops: [],
       films: [],
+      briefs: {},
       demoLoaded: false,
     };
   }
@@ -15,7 +16,7 @@ const ArcStore = (() => {
       const raw = localStorage.getItem(KEY);
       if (!raw) return empty();
       const data = JSON.parse(raw);
-      return { ...empty(), ...data };
+      return { ...empty(), ...data, briefs: data.briefs || {} };
     } catch {
       return empty();
     }
@@ -31,7 +32,9 @@ const ArcStore = (() => {
   }
 
   function addNote(state, note) {
-    state.notes.unshift({ id: uid(), createdAt: Date.now(), ...note });
+    const row = { id: uid(), createdAt: note.createdAt || Date.now(), ...note };
+    if (!row.id) row.id = uid();
+    state.notes.unshift(row);
     return save(state);
   }
 
@@ -73,10 +76,27 @@ const ArcStore = (() => {
     return save(state);
   }
 
+  function saveBrief(state, brief) {
+    state.briefs = state.briefs || {};
+    state.briefs[brief.date] = brief;
+    return save(state);
+  }
+
   function reset() {
     localStorage.removeItem(KEY);
     return empty();
   }
 
-  return { load, save, addNote, upsertLoops, setLoopStatus, saveFilm, reset, uid, empty };
+  return {
+    load,
+    save,
+    addNote,
+    upsertLoops,
+    setLoopStatus,
+    saveFilm,
+    saveBrief,
+    reset,
+    uid,
+    empty,
+  };
 })();

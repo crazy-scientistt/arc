@@ -5,3 +5,6 @@ Thumbs.db
 .vscode/
 node_modules/
 qa/
+.env
+.env.*
+!.env.example
