@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arc</title>
+  <meta name="description" content="Talk for 90 seconds. Arc keeps the plot." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 22c6-12 18-12 24 0' fill='none' stroke='%232C2C2B' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E" />
+</head>
+<body class="app-body">
+  <a class="skip" href="#app-main">Skip to content</a>
+  <div class="app-shell">
+    <header class="app-top">
+      <div class="wrap app-top-inner">
+        <a class="wordmark" href="index.html" aria-label="Arc home">
+          <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M4 22c6-12 18-12 24 0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          Arc
+        </a>
+        <span class="privacy-pill">Private on this device</span>
+      </div>
+    </header>
+
+    <main id="app-main" class="app-main">
+      <section id="view-today" class="view active">
+        <div class="day-head">
+          <div>
+            <h1 id="greet-title">Tonight.</h1>
+            <p id="greet-sub"></p>
+          </div>
+          <p class="meta" id="today-open"></p>
+        </div>
+        <div class="record-card">
+          <button class="mic" id="btn-record" type="button" aria-label="Record tonight">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/>
+              <path d="M6 11a6 6 0 0 0 12 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M12 17v4M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <h2>90 seconds</h2>
+          <p>Talk like you are texting someone who already knows you.</p>
+          <div class="toolbar" style="justify-content:center;">
+            <button class="btn" id="btn-demo" type="button">Load a sample week</button>
+          </div>
+        </div>
+        <div id="today-cards"></div>
+      </section>
+
+      <section id="view-loops" class="view">
+        <div class="day-head">
+          <div>
+            <h1>Open loops</h1>
+            <p>What you said you would do.</p>
+          </div>
+        </div>
+        <div id="loops-list"></div>
+      </section>
+
+      <section id="view-film" class="view">
+        <div class="day-head">
+          <div>
+            <h1>Sunday Film</h1>
+            <p>The week, as a picture instead of a blur.</p>
+          </div>
+        </div>
+        <div id="film-root"></div>
+      </section>
+
+      <section id="view-notes" class="view">
+        <div class="day-head">
+          <div>
+            <h1>The reel</h1>
+            <p>Everything you have told Arc.</p>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-danger" id="btn-clear" type="button">Erase this device</button>
+        </div>
+        <div id="notes-list"></div>
+      </section>
+    </main>
+
+    <nav class="app-nav" aria-label="App">
+      <button type="button" data-view="today" aria-current="page">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+        Today
+      </button>
+      <button type="button" data-view="loops">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 7h10M7 12h10M7 17h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Loops
+      </button>
+      <button type="button" data-view="film">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="6" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 6v12M16 6v12" stroke="currentColor" stroke-width="1.8"/></svg>
+        Film
+      </button>
+      <button type="button" data-view="notes">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 5h10v14H7z" stroke="currentColor" stroke-width="1.8"/><path d="M10 9h4M10 13h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Notes
+      </button>
+    </nav>
+  </div>
+
+  <div class="overlay" id="recorder" role="dialog" aria-modal="true" aria-labelledby="rec-title">
+    <div class="sheet">
+      <h2 id="rec-title">Speak the night</h2>
+      <p class="meta">Ninety seconds. No structure required.</p>
+      <div class="timer" id="timer">1:30</div>
+      <p class="listening" id="listening" aria-live="polite"></p>
+      <label class="meta" for="draft">Transcript</label>
+      <textarea id="draft" placeholder="I told Sara I'd send the notes. I keep saying I'm done with this job…"></textarea>
+      <div class="sheet-actions">
+        <button class="btn btn-primary" id="btn-listen" type="button">Start listening</button>
+        <button class="btn" id="btn-save" type="button">Save card</button>
+        <button class="btn btn-ghost" id="btn-close" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/extract.js"></script>
+  <script src="js/film.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
