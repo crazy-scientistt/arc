@@ -19,11 +19,13 @@
           </svg>
           Arc
         </a>
-        <span class="privacy-pill">Private on this device</span>
+        <button class="privacy-pill" id="ai-status" type="button">AI on · Inkling</button>
       </div>
     </header>
 
     <main id="app-main" class="app-main">
+      <p class="receipt" id="receipt" hidden></p>
+
       <section id="view-today" class="view active">
         <div class="day-head">
           <div>
@@ -32,6 +34,7 @@
           </div>
           <p class="meta" id="today-open"></p>
         </div>
+        <div id="brief-root"></div>
         <div class="record-card">
           <button class="mic" id="btn-record" type="button" aria-label="Record tonight">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -41,7 +44,7 @@
             </svg>
           </button>
           <h2>90 seconds</h2>
-          <p>Talk like you are texting someone who already knows you.</p>
+          <p>Talk. Whisper hears it. Inkling reads the plot — English, Urdu, or both.</p>
           <div class="toolbar" style="justify-content:center;">
             <button class="btn" id="btn-demo" type="button">Load a sample week</button>
           </div>
@@ -84,43 +87,66 @@
     </main>
 
     <nav class="app-nav" aria-label="App">
-      <button type="button" data-view="today" aria-current="page">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
-        Today
-      </button>
-      <button type="button" data-view="loops">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 7h10M7 12h10M7 17h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        Loops
-      </button>
-      <button type="button" data-view="film">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="6" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 6v12M16 6v12" stroke="currentColor" stroke-width="1.8"/></svg>
-        Film
-      </button>
-      <button type="button" data-view="notes">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 5h10v14H7z" stroke="currentColor" stroke-width="1.8"/><path d="M10 9h4M10 13h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        Notes
-      </button>
+      <button type="button" data-view="today" aria-current="page">Today</button>
+      <button type="button" data-view="loops">Loops</button>
+      <button type="button" data-view="film">Film</button>
+      <button type="button" data-view="notes">Notes</button>
     </nav>
   </div>
 
   <div class="overlay" id="recorder" role="dialog" aria-modal="true" aria-labelledby="rec-title">
     <div class="sheet">
       <h2 id="rec-title">Speak the night</h2>
-      <p class="meta">Ninety seconds. No structure required.</p>
+      <p class="meta">Ninety seconds. Whisper transcribes. Inkling reads.</p>
       <div class="timer" id="timer">1:30</div>
       <p class="listening" id="listening" aria-live="polite"></p>
       <label class="meta" for="draft">Transcript</label>
-      <textarea id="draft" placeholder="I told Sara I'd send the notes. I keep saying I'm done with this job…"></textarea>
+      <textarea id="draft" placeholder="I told Sara I'd send the notes…"></textarea>
       <div class="sheet-actions">
-        <button class="btn btn-primary" id="btn-listen" type="button">Start listening</button>
+        <button class="btn btn-primary" id="btn-listen" type="button">Start recording</button>
         <button class="btn" id="btn-save" type="button">Save card</button>
         <button class="btn btn-ghost" id="btn-close" type="button">Close</button>
       </div>
     </div>
   </div>
 
+  <div class="overlay" id="settings" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="sheet">
+      <h2 id="settings-title">Connect AI</h2>
+      <p class="meta" id="settings-msg">OpenRouter + Inkling. Key stays in .env or Settings. Never committed.</p>
+      <label class="meta" for="ai-provider">Provider</label>
+      <select id="ai-provider">
+        <option value="openrouter" selected>OpenRouter</option>
+        <option value="openai">OpenAI</option>
+        <option value="groq">Groq</option>
+        <option value="anthropic">Anthropic</option>
+      </select>
+      <label class="meta" for="ai-model">Model</label>
+      <input id="ai-model" type="text" value="thinkingmachines/inkling:free" autocomplete="off" />
+      <label class="meta" for="ai-key">API key (optional if .env is set)</label>
+      <input id="ai-key" type="password" placeholder="sk-or-v1-…" autocomplete="off" />
+      <div class="sheet-actions">
+        <button class="btn btn-primary" id="btn-save-settings" type="button">Save</button>
+        <button class="btn btn-ghost" id="btn-close-settings" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="close-loop" role="dialog" aria-modal="true" aria-labelledby="close-title">
+    <div class="sheet">
+      <h2 id="close-title">Did you send it?</h2>
+      <p class="meta" id="close-copy"></p>
+      <textarea id="close-draft" hidden></textarea>
+      <div class="sheet-actions">
+        <button class="btn btn-primary" id="btn-sent" type="button">Yes, mark done</button>
+        <button class="btn" id="btn-draft-close" type="button">Draft the text</button>
+        <button class="btn btn-ghost" id="btn-cancel-close" type="button">Not yet</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/store.js"></script>
-  <script src="js/extract.js"></script>
+  <script src="js/ai.js"></script>
   <script src="js/film.js"></script>
   <script src="js/app.js"></script>
 </body>
