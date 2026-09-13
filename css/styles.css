@@ -370,10 +370,17 @@ button { cursor: pointer; }
 }
 .privacy-pill {
   font-size: 13px;
-  background: var(--green-soft);
-  color: #2d5c43;
+  background: var(--secondary);
+  color: var(--text);
   padding: 6px 10px;
   border-radius: var(--radius);
+  border: 0;
+  cursor: pointer;
+  min-height: 44px;
+}
+.privacy-pill.ready {
+  background: var(--green-soft);
+  color: #2d5c43;
 }
 .app-main {
   width: min(760px, calc(100% - 48px));
@@ -464,6 +471,24 @@ button { cursor: pointer; }
   margin: 0 0 8px;
   font-size: 18px;
   letter-spacing: -0.02em;
+}
+.receipt {
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--green-soft);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin: 0 0 16px;
+}
+.brief-card ol.brief-list {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+.brief-card li { margin: 0 0 8px; }
+.closed-heading {
+  font-family: var(--serif);
+  font-weight: 400;
+  margin: 32px 0 12px;
 }
 .meta {
   font-size: 13px;
@@ -611,6 +636,16 @@ textarea {
   padding: 12px;
   background: var(--soft);
   resize: vertical;
+}
+.sheet label { display: block; margin: 12px 0 6px; }
+.sheet input,
+.sheet select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  background: var(--soft);
 }
 .sheet-actions {
   display: flex;
